@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Point of no return</title>
+</head>
+<canvas id="canvas" class="content" width="640" height="480" style="border:1px solid #000000;">
+</canvas> 
+<style>
+.content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+</style>
+<script>
+
+var c = document.getElementById("canvas");
+var ctx = c.getContext("2d");
+W = c.width
+H = c.height
+
+bx = 20
+by = H/2
+ba = 0
+
+ROT_STRENGTH = 0.1
+
+window.addEventListener('keydown', keydown, false);
+window.addEventListener('keyup', keyup, false);
+
+row = false
+
+ROW_STRENGTH = 2
+
+function keydown(e) {
+    var code = e.keyCode;
+    switch (code) {
+        case 37: ba -= ROT_STRENGTH; break; //Left key
+        case 38: row = true; break; //Up key
+        case 39: ba += ROT_STRENGTH; break; //Right key
+        case 40: row = false; break; //Down key
+        //default: console.log(code); //Everything else
+    }
+}
+
+function keyup(e) {
+    var code = e.keyCode;
+    switch (code) {
+        //case 37: ba -= ROT_STRENGTH; break; //Left key
+        case 38: row = false; break; //Up key
+        //case 39: ba += ROT_STRENGTH; break; //Right key
+        case 40: row = false; break; //Down key
+        //default: console.log(code); //Everything else
+    }
+}
+
+function getField(x,y) {
+	return x/100
+}
+
+function rotrect(x,y,w,h,a) {
+
+	// Matrix transformation
+	
+	var center_x = x + w/2
+	var center_y = y + h/2
+	
+	ctx.translate(center_x, center_y);
+	ctx.rotate(a);
+	ctx.translate(-center_x, -center_y);
+
+	// Rotated rectangle
+	if (row) {
+		ctx.fillStyle = 'red';
+	} else {
+		ctx.fillStyle = 'blue';
+	}
+	ctx.fillRect(x, y, w, h);
+	ctx.stroke();
+	
+}
+
+function line(x,y,w,h) {
+	ctx.beginPath();
+	ctx.moveTo(x,y);
+	ctx.lineTo(w,h);
+	ctx.stroke(); 
+}
+
+function update() {
+	ctx.clearRect(0, 0, W, H);
+	canvas.width = canvas.width
+	
+	
+	for (var x=0;x<W;x++) {
+		if (getField(x,H/2)>=ROW_STRENGTH) {
+			line(x,0,x,H);
+			break;		
+		}
+	}
+	
+	//ctx.lineTo(200, 100);
+	rotrect(bx, by, 35, 15, ba)
+	
+	if (row) {
+		bx += Math.cos(ba) * ROW_STRENGTH
+		by += Math.sin(ba) * ROW_STRENGTH
+	}
+	
+	bx += getField(bx,by)
+
+
+}
+
+setInterval(update, 1000/30)
+
+</script>
+<body>
+</body>
+
+</html> 
